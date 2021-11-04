@@ -1,0 +1,19 @@
+# List of catalogs to validate
+catalogs:
+  - name: giantswarm
+    url: https://raw.githubusercontent.com/giantswarm/giantswarm-catalog/master/index.yaml
+#  - name: giantswarm-playground
+#    url: https://raw.githubusercontent.com/giantswarm/giantswarm-playground-catalog/master/index.yaml
+
+# GitHub organisation expected to own the app home repository
+github_repo_organization: giantswarm
+
+# Some sites don't respond to requests looking like from a bot,
+# so we pretend to be this browser when fetching URLs.
+user_agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36
+
+# Regular expression used to validate chart keywords
+keyword_pattern: '[a-z0-9-]+'
+
+# Pattern to find team names in CODEOWNERS file
+codeowner_team_pattern: '@giantswarm/([a-zA-Z0-9-]+)'
