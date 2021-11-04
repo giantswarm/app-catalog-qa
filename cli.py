@@ -60,13 +60,13 @@ def main(conf, token_path, app_filter):
         accolades_count = 0
         index = load_catalog_index(cat['url'])
         
-        if app_filter is None:
+        if app_filter == ():
             print(f'\n## Catalog `{cat["name"]}` - {len(index["entries"])} apps')
 
         for app_name in index['entries'].keys():
 
             # Apply app filter
-            if app_filter is not None:
+            if app_filter != ():
                 if app_name not in app_filter:
                     continue
 
