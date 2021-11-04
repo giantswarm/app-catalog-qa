@@ -1,8 +1,34 @@
 # App catalog quality assurance
 
-A Python script to check how our app catalogs are doing
+A utility to check how app metadata and app repositories referenced in a catalog are doing with regard to some quality standards.
 
-## TODO
+The result is printed as a Markdown checkbox list, suited for GitHub issues.
+
+## Prerequisites
+
+- Install requirements via `pip install -r requirements.txt` into your (virtual) Python environment.
+
+- Check the provided `config.yaml` file and make sure `catalogs:` has the right catalog enabled. You can check multiple catalogs.
+
+- Have a GitHub personal access token in a file (e. g. `~/.github-token`).
+
+## Usage
+
+Run the script like this:
+
+```nohighlight
+python cli.py 
+```
+
+You can optionally use the following command line flags:
+
+- `--app-name`: Name of an app to check. If not provided, will check the entire catalog(s) configured.
+- `--config`: Path to a configuration file. Default: `./config.yaml`.
+- `--token-path`: Path to a token file. Default: `~/.github-token`.
+
+The result will be printed to the console.
+
+## Future improvements
 
 More validations:
 
