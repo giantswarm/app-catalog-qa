@@ -192,7 +192,7 @@ def validate_app_release(release: dict) -> dict:
     # apiVersions
     ret = check_condition(release['apiVersion'] in ('v1', 'v2'), ret,
                           error=f'Invalid helm chart apiVersion value `{release["apiVersion"]}`')
-    ret = check_condition(release['apiVersion'] == 'v1', ret,
+    ret = check_condition(release['apiVersion'] == 'v2', ret,
                           suggestion='Migrate helm chart to apiVersion v2')
 
     # recommended fields
