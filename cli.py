@@ -92,29 +92,31 @@ def main(conf, token_path, app_filter):
 
                 print(f'\n### {app_label} ({app_owner}) -- {errinfo}')
 
-                print('\n<details>')
+            print('\n<details>')
 
-                if len(result['errors']):
-                    print(f"\n#### {attr('bold')}{fg('red')}Errors{attr('reset')}\n")
-                    for error in result['errors']:
-                        print(f"- [ ] {fg('red')}{error}{attr('reset')}")
+            print(f'\nInformation based on release v{result["latest_release"]}')
 
-                if len(result['warnings']):
-                    print(f"\n#### {attr('bold')}{fg('yellow')}Warnings{attr('reset')}\n")
-                    for warning in result['warnings']:
-                        print(f"- [ ] {fg('yellow')}{warning}{attr('reset')}")
+            if len(result['errors']):
+                print(f"\n#### {attr('bold')}{fg('red')}Errors{attr('reset')}\n")
+                for error in result['errors']:
+                    print(f"- [ ] {fg('red')}{error}{attr('reset')}")
 
-                if len(result['suggestions']):
-                    print(f"\n#### {attr('bold')}{fg('yellow')}Suggestions{attr('reset')}\n")
-                    for item in result['suggestions']:
-                        print(f"- [ ] {item}")
+            if len(result['warnings']):
+                print(f"\n#### {attr('bold')}{fg('yellow')}Warnings{attr('reset')}\n")
+                for warning in result['warnings']:
+                    print(f"- [ ] {fg('yellow')}{warning}{attr('reset')}")
 
-                # if len(result['accolades']):
-                #     print(f"\n#### {attr('bold')}{fg('yellow')}Looking good{attr('reset')}\n")
-                #     for item in result['accolades']:
-                #         print(f"- {fg('green')}{item}{attr('reset')}")
+            if len(result['suggestions']):
+                print(f"\n#### {attr('bold')}{fg('yellow')}Suggestions{attr('reset')}\n")
+                for item in result['suggestions']:
+                    print(f"- [ ] {item}")
 
-                print('\n</details>')
+            # if len(result['accolades']):
+            #     print(f"\n#### {attr('bold')}{fg('yellow')}Looking good{attr('reset')}\n")
+            #     for item in result['accolades']:
+            #         print(f"- {fg('green')}{item}{attr('reset')}")
+
+            print('\n</details>')
 
         print(f'\n{error_count} errors, {warning_count} warnings, {suggestions_count} suggestions, {accolades_count} accolades in total')
 
@@ -131,6 +133,7 @@ def validate_app_releases(releases: list) -> dict:
         'accolades': [],
         'repo_url': None,
         'owner': None,
+        'latest_release': None,
     }
     
     releases_dict = {}   # dict with version string as key
@@ -143,8 +146,8 @@ def validate_app_releases(releases: list) -> dict:
         releases_dict[release['version']] = release
 
     try:
-        latest = latest_version(releases_dict.keys())
-        result = validate_app_release(releases_dict[latest])
+        ret['latest_release'] = latest_version(releases_dict.keys())
+        result = validate_app_release(releases_dict[ret['latest_release']])
         ret['errors'] += result['errors']
         ret['warnings'] += result['warnings']
         ret['suggestions'] += result['suggestions']
