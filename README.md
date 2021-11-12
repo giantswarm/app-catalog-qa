@@ -32,6 +32,7 @@ The result will be printed to the console.
 
 More validations:
 
+- Check whether the app is included in Changes & Releases in docs
 - Validate kubeVersion
 - Find app duplicates, also in several catalogs
 - Too similar names in apps (grafana and grafana-app)
