@@ -17,3 +17,6 @@ keyword_pattern: '[a-z0-9-]+'
 
 # Pattern to find team names in CODEOWNERS file
 codeowner_team_pattern: '@giantswarm/([a-zA-Z0-9-]+)'
+
+# Configuration for aggregated changelogs
+aggregated_changelogs_config_url: https://raw.githubusercontent.com/giantswarm/docs/main/scripts/aggregate-changelogs/config.yaml

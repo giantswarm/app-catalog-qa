@@ -31,12 +31,14 @@ GITHUB_CLIENT = None
 CONF = None
 KEYWORD_RE = None
 CODEOWNER_TEAM_RE = None
+AGGREGATED_CHANGELOGS_REPOS = None
 
 @click.command()
 @click.option('--conf', default='./config.yaml', help='Configuration file path.')
 @click.option('--token-path', default='~/.github-token', help='Github token path.')
 @click.option('--app-name', 'app_filter', help='Only report for this app', multiple=True)
 def main(conf, token_path, app_filter):
+    global AGGREGATED_CHANGELOGS_REPOS
     global GITHUB_CLIENT
     global CONF
     global KEYWORD_RE
@@ -52,6 +54,9 @@ def main(conf, token_path, app_filter):
     else:
         token = read_token(token_path)
         GITHUB_CLIENT = github.Github(token)
+    
+    AGGREGATED_CHANGELOGS_REPOS = get_aggregated_changelog_repos()
+    pprint(AGGREGATED_CHANGELOGS_REPOS)
 
     for cat in CONF['catalogs']:
         error_count = 0
@@ -71,10 +76,21 @@ def main(conf, token_path, app_filter):
                     continue
 
             result = validate_app_releases(index['entries'][app_name])
+
+            # another validation not based on releases
+            if (AGGREGATED_CHANGELOGS_REPOS is not None) and (result['repo_url'] is not None):
+                result = check_condition(result['repo_url'] in AGGREGATED_CHANGELOGS_REPOS,
+                                         result,
+                                         error='Releases are not aggregated in Changes and '
+                                               'Releases. Please add the app\'s repo to the '
+                                               '[config](https://github.com/giantswarm/docs/blob/main/scripts/aggregate-changelogs/config.yaml)')
+
+
             error_count += len(result['errors'])
             warning_count += len(result['warnings'])
             suggestions_count  += len(result['suggestions'])
             accolades_count += len(result['accolades'])
+
 
             if len(result['errors']) + len(result['warnings']) > 0:
                 errinfo = ''
@@ -123,6 +139,8 @@ def main(conf, token_path, app_filter):
 
 def validate_app_releases(releases: list) -> dict:
     """
+    Gathers errors, warnings, suggestions etc. based on
+    the releases for an app in a helm repository.
     Validates whether a latest release can be found
     and if yes, does a deeper check on the latest release.
     """
@@ -532,6 +550,27 @@ def get_github_repo_file(repo_handle: str, path: str) -> Optional[bytes]:
         return file.decoded_content
     except UnknownObjectException:
         return None
+
+
+def get_aggregated_changelog_repos() -> list:
+    """
+    Return a list of github repositories configured for
+    aggregated changelogs.
+    """
+    global CONF
+    conf_key = 'aggregated_changelogs_config_url'
+    
+    if conf_key not in CONF:
+        return None
+    
+    r = requests.get(CONF[conf_key])
+    r.raise_for_status()
+    data = yaml.load(r.text, Loader=yaml.Loader)
+
+    if 'repositories' not in data:
+        raise ValueError(f'Invalid YAML found in {CONF[conf_key]}, key "repositories" not found.')
+    
+    return list(map(lambda x: f'https://github.com/{x}', data['repositories'].keys()))
 
 
 def read_token(path: str) -> str:
