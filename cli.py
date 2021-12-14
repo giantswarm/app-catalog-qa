@@ -56,7 +56,6 @@ def main(conf, token_path, app_filter):
         GITHUB_CLIENT = github.Github(token)
     
     AGGREGATED_CHANGELOGS_REPOS = get_aggregated_changelog_repos()
-    pprint(AGGREGATED_CHANGELOGS_REPOS)
 
     for cat in CONF['catalogs']:
         error_count = 0
@@ -312,12 +311,6 @@ def validate_app_release(release: dict) -> dict:
         ret = check_condition(ANNOTATIONS_TEAM in release['annotations'], ret,
             warning=f'Annotation `{ANNOTATIONS_TEAM}` should be set',
             accolade=f'Team ownership is exposed via annotation')
-
-        if ANNOTATIONS_TEAM in release['annotations']:
-            owner_annotation = release['annotations'][ANNOTATIONS_TEAM]
-
-            ret = check_condition('-' in release['annotations'][ANNOTATIONS_TEAM], ret,
-                warning=f"Owner name in team annotation `{release['annotations'][ANNOTATIONS_TEAM]}` does not look like a proper GitHub team name, misses prefix like `team-`")
 
     if 'created' in release:
         created = isoparse(release['created']).replace(tzinfo=utc)
